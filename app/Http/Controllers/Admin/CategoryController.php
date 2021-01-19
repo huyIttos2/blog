@@ -54,16 +54,16 @@ class CategoryController extends Controller
         if(isset($image)){
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if(!Storage::disk('s3')->exists('category')){
-                Storage::disk('s3')->makeDirectory('category');
+            if(!Storage::disk('public')->exists('category')){
+                Storage::disk('public')->makeDirectory('category');
             }
             $category = Image::make($image)->resize(1600,1066)->save();
-            Storage::disk('s3')->put('category/'.$imageName,$category);
-            if(!Storage::disk('s3')->exists('category/slider')){
-                Storage::disk('s3')->makeDirectory('category/slider');
+            Storage::disk('public')->put('category/'.$imageName,$category);
+            if(!Storage::disk('public')->exists('category/slider')){
+                Storage::disk('public')->makeDirectory('category/slider');
             }
             $slider = Image::make($image)->resize(1600,479)->save();
-            Storage::disk('s3')->put('category/slider/'.$imageName,$slider);
+            Storage::disk('public')->put('category/slider/'.$imageName,$slider);
         }else{
             $imageName = "default.png";
         }
@@ -120,24 +120,24 @@ class CategoryController extends Controller
         if(isset($image)){
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if(!Storage::disk('s3')->exists('category')){
-                Storage::disk('s3')->makeDirectory('category');
+            if(!Storage::disk('public')->exists('category')){
+                Storage::disk('public')->makeDirectory('category');
             }
             //delete old image
-            if(Storage::disk('s3')->exists('category/'.$category->image)){
-                Storage::disk('s3')->delete('category/'.$category->image);
+            if(Storage::disk('public')->exists('category/'.$category->image)){
+                Storage::disk('public')->delete('category/'.$category->image);
             }
             $categoryimage = Image::make($image)->resize(1600,479)->save();
-            Storage::disk('s3')->put('category/'.$imageName,$categoryimage);
-            if(!Storage::disk('s3')->exists('category/slider')){
-                Storage::disk('s3')->makeDirectory('category/slider');
+            Storage::disk('public')->put('category/'.$imageName,$categoryimage);
+            if(!Storage::disk('public')->exists('category/slider')){
+                Storage::disk('public')->makeDirectory('category/slider');
             }
             //delete old slider image
-            if(Storage::disk('s3')->exists('category/slider/'.$category->image)){
-                Storage::disk('s3')->delete('category/slider'.$category->image);
+            if(Storage::disk('public')->exists('category/slider/'.$category->image)){
+                Storage::disk('public')->delete('category/slider'.$category->image);
             }
             $slider = Image::make($image)->resize(1600,479)->save();
-            Storage::disk('s3')->put('category/slider/'.$imageName,$slider);
+            Storage::disk('public')->put('category/slider/'.$imageName,$slider);
         }else{
             $imageName = $category->image;
         }
@@ -158,11 +158,11 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::find($id);
-        if(Storage::disk('s3')->exists('category/'.$category->image)){
-            Storage::disk('s3')->delete('category/'.$category->image);
+        if(Storage::disk('public')->exists('category/'.$category->image)){
+            Storage::disk('public')->delete('category/'.$category->image);
         }
-        if(Storage::disk('s3')->exists('category/slider/'.$category->image)){
-            Storage::disk('s3')->delete('category/slider/'.$category->image);
+        if(Storage::disk('public')->exists('category/slider/'.$category->image)){
+            Storage::disk('public')->delete('category/slider/'.$category->image);
         }
         $category->delete();
         Toastr::success('Category success deleted','Success');

@@ -33,15 +33,15 @@ class SettingsController extends Controller
         if(isset($image)){
             $currenDate = Carbon::now()->toDateString();
             $imageName = $slug.'-'.$currenDate.'-'.uniqid().'-'.$image->getClientOriginalExtension();
-            if(!Storage::disk('s3')->exists('profile')){
-                Storage::disk('s3')->makeDirectory('profile');
+            if(!Storage::disk('public')->exists('profile')){
+                Storage::disk('public')->makeDirectory('profile');
             }
 //            delete old Image
-            if(Storage::disk('s3')->exists('profile/'.$user->image)){
-                Storage::disk('s3')->delete('profile/'.$user->image);
+            if(Storage::disk('public')->exists('profile/'.$user->image)){
+                Storage::disk('public')->delete('profile/'.$user->image);
             }
             $profile = Image::make($image)->resize(500,500)->save();
-            Storage::disk('s3')->put('profile/'.$imageName,$profile);
+            Storage::disk('public')->put('profile/'.$imageName,$profile);
         }else{
             $imageName = $user->image;
         }

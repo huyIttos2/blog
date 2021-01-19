@@ -65,17 +65,17 @@ class PostController extends Controller
         if(isset($image)){
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if(!Storage::disk('s3')->exists('post')){
-                Storage::disk('s3')->makeDirectory('post');
+            if(!Storage::disk('public')->exists('post')){
+                Storage::disk('public')->makeDirectory('post');
             }
 
             $postImage = Image::make($image)->resize(1600,1066)->save();
-            Storage::disk('s3')->put('post/'.$imageName, $postImage);
-            if(!Storage::disk('s3')->exists('post/slider')){
-                Storage::disk('s3')->makeDirectory('post/slider');
+            Storage::disk('public')->put('post/'.$imageName, $postImage);
+            if(!Storage::disk('public')->exists('post/slider')){
+                Storage::disk('public')->makeDirectory('post/slider');
             }
             $slider = Image::make($image)->resize(1600,479)->save();
-            Storage::disk('s3')->put('post/slider/'.$imageName,$slider);
+            Storage::disk('public')->put('post/slider/'.$imageName,$slider);
         }else{
             $imageName = "default.png";
         }
@@ -151,25 +151,25 @@ class PostController extends Controller
         if(isset($image)){
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if(!Storage::disk('s3')->exists('post')){
-                Storage::disk('s3')->makeDirectory('post');
+            if(!Storage::disk('public')->exists('post')){
+                Storage::disk('public')->makeDirectory('post');
             }
             //            delete old image
-            if(Storage::disk('s3')->exists('post/'.$post->image)){
-                Storage::disk('s3')->delete('post/'.$post->image);
+            if(Storage::disk('public')->exists('post/'.$post->image)){
+                Storage::disk('public')->delete('post/'.$post->image);
             }
             $postImage = Image::make($image)->resize(1600,1066)->save();
-            Storage::disk('s3')->put('post/'.$imageName, $postImage->__toString());
-            Storage::disk('s3')->put('post/'.$imageName, $postImage->__toString());
-            if(!Storage::disk('s3')->exists('post/slider')){
-                Storage::disk('s3')->makeDirectory('post/slider');
+            Storage::disk('public')->put('post/'.$imageName, $postImage->__toString());
+            Storage::disk('public')->put('post/'.$imageName, $postImage->__toString());
+            if(!Storage::disk('public')->exists('post/slider')){
+                Storage::disk('public')->makeDirectory('post/slider');
             }
             //delete old slider image
-            if(Storage::disk('s3')->exists('post/slider/'.$post->image)){
-                Storage::disk('s3')->delete('post/slider'.$post->image);
+            if(Storage::disk('public')->exists('post/slider/'.$post->image)){
+                Storage::disk('public')->delete('post/slider'.$post->image);
             }
             $slider = Image::make($image)->resize(1600,479)->save();
-            Storage::disk('s3')->put('post/slider/'.$imageName,$slider->__toString());
+            Storage::disk('public')->put('post/slider/'.$imageName,$slider->__toString());
         }else{
             $imageName = $post->image;
         }
@@ -224,8 +224,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        if(Storage::disk('s3')->exists('post/'.$post->image)){
-            Storage::disk('s3')->delete('post/'.$post->image);
+        if(Storage::disk('public')->exists('post/'.$post->image)){
+            Storage::disk('public')->delete('post/'.$post->image);
         }
         $post->categories()->detach();
         $post->tags()->detach();
